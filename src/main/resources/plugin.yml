@@ -1,0 +1,9 @@
+name: Gunner
+version: ${project.version}
+main: nulld.gunner.Main
+prefix:  Gunner
+load: STARTUP
+
+commands:
+  총:
+  총기:
