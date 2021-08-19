@@ -9,7 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class Main extends JavaPlugin implements Listener {
@@ -17,6 +19,8 @@ public final class Main extends JavaPlugin implements Listener {
     public static String prefix = "&8[ &e&lGunner&8 ] ";
     public static ConsoleCommandSender console = Bukkit.getConsoleSender();
     public static Map<String, Object> settings = new HashMap<>();
+
+    public static List<String> gunItemLoreSeq = Arrays.asList("총기 데미지", "총기 탄 퍼짐", "총기 반동", "총기 탄속", "총기 장전 속도", "총기 무게", "총기 거리", "총기 종류", "총기 블록 파괴", "총기 피격 효과");
 
     @Override
     public void onEnable() {
