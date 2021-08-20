@@ -17,10 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CustomInvEvent implements Listener {
@@ -32,21 +29,21 @@ public class CustomInvEvent implements Listener {
             if (Main.settings.get(player.getUniqueId().toString() + ".gunCreateNameOf.setName") != null){
                 ItemStack nameItem = event.getInventory().getItem(19);
                 ItemMeta nameItemMeta = nameItem.getItemMeta();
-                List<String> list = Arrays.asList(Main.coloredText("&f" + Main.settings.get(player.getUniqueId().toString() + ".gunCreateNameOf.setName")));
+                List<String> list = Collections.singletonList(Main.coloredText("&f" + Main.settings.get(player.getUniqueId().toString() + ".gunCreateNameOf.setName")));
                 nameItemMeta.setLore(list);
                 nameItem.setItemMeta(nameItemMeta);
             }
             if (Main.settings.get(player.getUniqueId().toString() + ".gunCreateDamageOf.minDamage") != null && Main.settings.get(player.getUniqueId().toString() + ".gunCreateDamageOf.maxDamage") != null){
                 ItemStack damageItem = event.getInventory().getItem(21);
                 ItemMeta damageItemMeta = damageItem.getItemMeta();
-                List<String> list = Arrays.asList(Main.coloredText("&a최소 데미지 : &f" + Main.settings.get(player.getUniqueId().toString() + ".gunCreateDamageOf.minDamage")), Main.coloredText("&a최대 데미지 : &f" + Main.settings.get(player.getUniqueId().toString() + ".gunCreateDamageOf.maxDamage")));
+                List<String> list = Collections.singletonList(new Data("총기 데미지", Main.settings.get(player.getUniqueId().toString() + ".gunCreateDamageOf.minDamage") + " ~ " + Main.settings.get(player.getUniqueId().toString() + ".gunCreateDamageOf.maxDamage")).toString());
                 damageItemMeta.setLore(list);
                 damageItem.setItemMeta(damageItemMeta);
             }
             if (Main.settings.get(player.getUniqueId().toString() + ".gunCreateScatterOf.scatter") != null){
                 ItemStack nameItem = event.getInventory().getItem(22);
                 ItemMeta nameItemMeta = nameItem.getItemMeta();
-                List<String> list = Arrays.asList(Main.coloredText("&f총기 탄 퍼짐 : &e" + Main.settings.get(player.getUniqueId().toString() + ".gunCreateScatterOf.scatter")));
+                List<String> list = Collections.singletonList(new Data("총기 탄 퍼짐", Main.settings.get(player.getUniqueId().toString() + ".gunCreateScatterOf.scatter")).toString());
                 nameItemMeta.setLore(list);
                 nameItem.setItemMeta(nameItemMeta);
             }
@@ -65,35 +62,60 @@ public class CustomInvEvent implements Listener {
         if (clickedItem != null){
             if (title.equalsIgnoreCase("총기 제작")){
                 event.setCancelled(true);
-                if (slot == 19){
-                    Main.settings.put(player.getUniqueId().toString() + ".gunCreateNameOf.setNameByChat", true);
-                    player.sendMessage(Main.coloredText(Main.prefix + "&a총기의 이름을 입력해 주세요."));
-                } else if (slot == 20){
-                    Main.settings.put(player.getUniqueId().toString() + ".setModelInventory.BukkitTaskCancel", false);
-                    player.openInventory(CustomInv.setModelInv(ModelType.GUNS));
-                } else if (slot == 21){
-                    Main.settings.put(player.getUniqueId().toString() + ".gunCreateDamageOf.setDamageByChat", true);
-                    Main.settings.put(player.getUniqueId().toString() + ".gunCreateDamageOf.thisItem", clickedItem);
-                    player.sendMessage(Main.coloredText(Main.prefix + "&a총기의 데미지를 입력해 주세요."));
-                    player.sendMessage(Main.coloredText(Main.prefix + "&e최소데미지 최대데미지&7(ex: 10 20)"));
-                } else if (slot == 22){
-                    Main.settings.put(player.getUniqueId().toString() + ".gunCreateScatterOf.setScatterByChat", true);
-                    Main.settings.put(player.getUniqueId().toString() + ".gunCreateScatterOf.thisItem", clickedItem);
-                    player.sendMessage(Main.coloredText(Main.prefix + "&a총기의 탄 퍼짐 값을 입력해 주세요."));
-                    player.sendMessage(Main.coloredText(Main.prefix + "&e0.0 ~ 100.0"));
-                } else if (slot == 23){
-                    Main.settings.put(player.getUniqueId().toString() + ".gunCreateKnockBackOf.setKnockBackByChat", true);
-                    Main.settings.put(player.getUniqueId().toString() + ".gunCreateKnockBackOf.thisItem", clickedItem);
-                    player.sendMessage(Main.coloredText(Main.prefix + "&a총기의 반동 값을 입력해 주세요."));
-                    player.sendMessage(Main.coloredText(Main.prefix + "&e0.0 ~ 100.0"));
-                } else if (slot == 24){
-                    Main.settings.put(player.getUniqueId().toString() + ".gunCreateSpeedOf.setSpeedByChat", true);
-                    Main.settings.put(player.getUniqueId().toString() + ".gunCreateSpeedOf.thisItem", clickedItem);
-                    player.sendMessage(Main.coloredText(Main.prefix + "&a1초당 탄의 개수를 입력해 주세요."));
-                }
-                if (Arrays.asList(19, 20, 21, 22, 23, 24, 25, 8, 29, 30, 31, 32, 33, 34, 37).contains(slot)) {
+                if (Arrays.asList(19, 20, 21, 22, 23, 24, 29, 30, 31, 32, 33, 34).contains(slot)) {
                     if (eventInv.getItem(4) != null && !eventInv.getItem(4).equals(Items.air)) Main.settings.put(player.getUniqueId().toString() + ".gunCreateModelOf.currentModel", eventInv.getItem(4));
-                    player.closeInventory();
+                    else Main.settings.put(player.getUniqueId().toString() + ".gunCreateModelOf.currentModel", Items.air);
+                    if (slot == 19){ // 이름
+                        Main.settings.put(player.getUniqueId().toString() + ".gunCreateNameOf.setNameByChat", true);
+                        player.sendMessage(Main.coloredText(Main.prefix + "&a총기의 이름을 입력해 주세요."));
+                        player.closeInventory();
+                    } else if (slot == 20){ // 모델
+                        Main.settings.put(player.getUniqueId().toString() + ".setModelInventory.BukkitTaskCancel", false);
+                        player.openInventory(CustomInv.setModelInv(ModelType.GUNS));
+                    } else if (slot == 21){ // 데미지
+                        Main.settings.put(player.getUniqueId().toString() + ".gunCreateDamageOf.setDamageByChat", true);
+                        player.sendMessage(Main.coloredText(Main.prefix + "&a총기의 데미지를 입력해 주세요."));
+                        player.sendMessage(Main.coloredText(Main.prefix + "&e최소데미지 최대데미지&7(ex: 10 20)"));
+                        player.closeInventory();
+                    } else if (slot == 22){ // 탄 퍼짐
+                        Main.settings.put(player.getUniqueId().toString() + ".gunCreateScatterOf.setScatterByChat", true);
+                        player.sendMessage(Main.coloredText(Main.prefix + "&a총기의 탄 퍼짐 값을 입력해 주세요."));
+                        player.sendMessage(Main.coloredText(Main.prefix + "&e0.0 ~ 100.0"));
+                        player.closeInventory();
+                    } else if (slot == 23){ // 반동
+                        Main.settings.put(player.getUniqueId().toString() + ".gunCreateKnockBackOf.setKnockBackByChat", true);
+                        Main.settings.put(player.getUniqueId().toString() + ".gunCreateKnockBackOf.thisItem", clickedItem);
+                        player.sendMessage(Main.coloredText(Main.prefix + "&e0.0 ~ 100.0"));
+                        player.closeInventory();
+                    } else if (slot == 24){ // 탄속
+                        Main.settings.put(player.getUniqueId().toString() + ".gunCreateSpeedOf.setSpeedByChat", true);
+                        player.sendMessage(Main.coloredText(Main.prefix + "&a1초당 탄의 개수를 입력해 주세요."));
+                        player.closeInventory();
+                    } else if (slot == 29){ // 장전 속도
+                        Main.settings.put(player.getUniqueId().toString() + ".gunCreateReloadSpeedOf.setReloadSpeedByChat", true);
+                        player.sendMessage(Main.coloredText(Main.prefix + "&a장전하는데 걸리는 시간을 입력해 주세요."));
+                        player.closeInventory();
+                    } else if (slot == 30){ // 무게
+                        Main.settings.put(player.getUniqueId().toString() + ".gunCreateWeightOf.setWeightByChat", true);
+                        player.sendMessage(Main.coloredText(Main.prefix + "&a총기의 무게를 입력해 주세요."));
+                        player.closeInventory();
+                    } else if (slot == 31){ // 거리
+                        Main.settings.put(player.getUniqueId().toString() + ".gunCreateDistanceOf.setDistanceByChat", true);
+                        player.sendMessage(Main.coloredText(Main.prefix + "&a총기의 사거리를 입력해 주세요."));
+                        player.closeInventory();
+                    } else if (slot == 32){ // 종류
+                        player.openInventory(CustomInv.gunTypeInv((ItemStack) Main.settings.get(player.getUniqueId().toString() + ".gunCreateModelOf.currentModel")));
+                    } else if (slot == 33){ // 블록 파괴
+                        player.openInventory(CustomInv.blockBreakInv((ItemStack) Main.settings.get(player.getUniqueId().toString() + ".gunCreateModelOf.currentModel")));
+                    } else if (slot == 34){ // 피격 효과
+                        player.openInventory(CustomInv.effectInv((ItemStack) Main.settings.get(player.getUniqueId().toString() + ".gunCreateModelOf.currentModel")));
+                    }
+                } else if (slot == 25){ // 탄창
+                    player.openInventory(CustomInv.shotContainerSelectInv(1));
+                } else if (slot == 28) { // 총선 색상
+                    player.openInventory(CustomInv.shotColorInv());
+                } else if (slot == 37) { // 강화 재료
+                    player.openInventory(CustomInv.ingredientInv());
                 }
             } else if (title.contains("모델 설정")){
                 if (eventInv.equals(playerInv)) event.setCancelled(false);

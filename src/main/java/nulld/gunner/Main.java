@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,14 @@ public final class Main extends JavaPlugin implements Listener {
     public void onEnable() {
         // Plugin startup logic
         EnableEvents.eventLoader();
+        File gunsFolder = new File(getDataFolder() + "/Guns");
+        if (!gunsFolder.exists()) gunsFolder.mkdirs();
+        File containersFolder = new File(getDataFolder() + "/Containers");
+        if (!containersFolder.exists()) containersFolder.mkdirs();
+        File shotsFolder = new File(getDataFolder() + "/Shots");
+        if (!shotsFolder.exists()) shotsFolder.mkdirs();
+        File partsFolder = new File(getDataFolder() + "/Parts");
+        if (!partsFolder.exists()) partsFolder.mkdirs();
 
         console.sendMessage(ExtraStrings.enableLogo);
         console.sendMessage(coloredText(prefix + "&aPlugin Enabled."));

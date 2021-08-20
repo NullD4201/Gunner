@@ -6,6 +6,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Collections;
+import java.util.List;
+
 public class Items {
     public static ItemStack air = new ItemStack(Material.AIR);
     public static ItemStack outUI = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7), " ");
@@ -15,7 +18,14 @@ public class Items {
 
     public static ItemStack listPrev = item(new ItemStack(Material.ARROW, 1), "&f이전 페이지");
     public static ItemStack listNext = item(new ItemStack(Material.ARROW, 1), "&f다음 페이지");
-    public static ItemStack listSetPage = item(new ItemStack(Material.COMPASS, 1), "&f페이지 이동");
+    public static ItemStack listSetPage(int page, int total){
+        ItemStack itemStack = item(new ItemStack(Material.COMPASS, 1), "&f페이지 이동");
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = Collections.singletonList(Main.coloredText("&6" + page + " / " + total));
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
 
     public static ItemStack itemCreateConfirm = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 4), "&e아이템 생성"); // 노란색
     public static ItemStack itemCreateSave = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5), "&2아이템 저장"); // 연두색
@@ -42,14 +52,17 @@ public class Items {
     public static ItemStack gunCreateEffectOf = item(new ItemStack(Material.BREWING_STAND_ITEM, 1), "&a총기 상대 피격 시 걸리는 효과");
     public static ItemStack gunCreateIngredientOf = item(new ItemStack(Material.SUGAR_CANE, 1), "&a총기 강화 재료");
 
+    public static ItemStack particleYes = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5), "&2저장"); // 연두색
+    public static ItemStack particleNo = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14), "&c취소"); // 빨간색
+
     public static ItemStack gunTypeRevolver = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 0), "&f권총"); // 흰색
     public static ItemStack gunTypeRifle = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 12), "&f라이플"); // 갈색
     public static ItemStack gunTypeMachineGun = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15), "&f기관총"); // 검정색
     public static ItemStack gunTypeSniper = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 11), "&f스나이퍼"); // 파란색
     public static ItemStack gunTypeComplete = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5), "&2설정 완료"); // 연두색
 
-    public static ItemStack blockBreakAllow = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5), "&2허용"); // 연두색
-    public static ItemStack blockBreakDeny = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14), "&c불가"); // 빨간색
+    public static ItemStack blockBreakAllow = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5), "&2허용 &7(클릭하여 불가로 변경)"); // 연두색
+    public static ItemStack blockBreakDeny = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14), "&c불가 &7(클릭하여 허용으로 변경)"); // 빨간색
 
     public static ItemStack effectType = item(new ItemStack(Material.DRAGONS_BREATH, 1), "&a<[ &2이펙트 &f설정 &a]>");
     public static ItemStack effectTime = item(new ItemStack(Material.WATCH, 1), "&a<[ &6시간 &f설정 &a]>");
