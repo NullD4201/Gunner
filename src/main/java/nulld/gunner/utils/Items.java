@@ -5,7 +5,11 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,8 +56,22 @@ public class Items {
     public static ItemStack gunCreateEffectOf = item(new ItemStack(Material.BREWING_STAND_ITEM, 1), "&a총기 상대 피격 시 걸리는 효과");
     public static ItemStack gunCreateIngredientOf = item(new ItemStack(Material.SUGAR_CANE, 1), "&a총기 강화 재료");
 
-    public static ItemStack particleYes = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5), "&2저장"); // 연두색
-    public static ItemStack particleNo = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14), "&c취소"); // 빨간색
+    public static ItemStack particlePrev = item(new ItemStack(Material.ARROW, 1), "&f이전");
+    public static ItemStack particleNext = item(new ItemStack(Material.ARROW, 1), "&f다음");
+    public static ItemStack particleColor = item(new ItemStack(Material.INK_SACK, 1, (short) 8), "&f색설정"); // 회색 염료
+    public static ItemStack particleColor(RGB rgb) {
+        short s = 1;
+        if (rgb.equals(RGB.G)) s = 2;
+        else if (rgb.equals(RGB.B)) s = 4;
+        ItemStack itemStack = item(new ItemStack(Material.INK_SACK, 1, s), "&c255");
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = new ArrayList<>();
+        lore.add(Main.coloredText("      &7[좌클릭] &e1씩 감소 &8/ &7[우클릭] &e1씩 증가"));
+        lore.add(Main.coloredText("&7[쉬프트좌클릭] &e10씩 감소 &8/ &7[쉬프트우클릭] &e10씩 증가"));
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
 
     public static ItemStack gunTypeRevolver = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 0), "&f권총"); // 흰색
     public static ItemStack gunTypeRifle = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 12), "&f라이플"); // 갈색
@@ -70,6 +88,39 @@ public class Items {
     public static ItemStack effectDamage = item(new ItemStack(Material.DIAMOND_SWORD, 1), "&a<[ &c데미지 &f설정 &a]>");
     public static ItemStack effectConfirm = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5), "&2피격효과 저장");
     public static ItemStack effectCancel = item(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14), "&c피격효과 삭제");
+
+    public static ItemStack potion(PotionEffectType type, String name){
+        ItemStack itemStack = item(new ItemStack(Material.POTION), "&f"+name);
+        PotionMeta itemMeta = (PotionMeta) itemStack.getItemMeta();
+        itemMeta.addCustomEffect(new PotionEffect(type, 100, 1), true);
+        itemStack.setItemMeta(itemMeta);
+
+        return itemStack;
+    }
+    public static ItemStack sec(String type){
+        ItemStack itemStack = null;
+        if (type.equalsIgnoreCase("D")){
+            itemStack = item(new ItemStack(Material.ARROW), "&c시간 감소");
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            List<String> lore = new ArrayList<>();
+            lore.add(Main.coloredText("&7[좌클릭] &f1초 감소"));
+            lore.add(Main.coloredText("&7[우클릭] &f10초 감소"));
+            lore.add(Main.coloredText("&7[휠클릭] &f1분 감소"));
+            itemMeta.setLore(lore);
+            itemStack.setItemMeta(itemMeta);
+        } else if (type.equalsIgnoreCase("A")){
+            itemStack = item(new ItemStack(Material.ARROW), "&c시간 증가");
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            List<String> lore = new ArrayList<>();
+            lore.add(Main.coloredText("&7[좌클릭] &f1초 증가"));
+            lore.add(Main.coloredText("&7[우클릭] &f10초 증가"));
+            lore.add(Main.coloredText("&7[휠클릭] &f1분 증가"));
+            itemMeta.setLore(lore);
+            itemStack.setItemMeta(itemMeta);
+        }
+
+        return itemStack;
+    }
 
     public static ItemStack ingredientOneToTen = item(new ItemStack(Material.SIGN, 1), "&a<[ &e1 ~ 10강 &f까지 필요한 &7재료 &a]>");
     public static ItemStack ingredientOverEleven = item(new ItemStack(Material.SIGN, 1), "&a<[ &c11강 &f이상 필요한 &7재료 &a]>");
@@ -134,5 +185,23 @@ public class Items {
         itemStack.setItemMeta(itemMeta);
 
         return itemStack;
+    }
+
+    public static void itemLore(ItemStack itemStack, String type, String string, int index){
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = itemMeta.getLore();
+        if (lore == null) lore = new ArrayList<>();
+
+        if (type.equalsIgnoreCase("add")){
+            if (index > lore.size() - 1) lore.add(Main.coloredText(string));
+            else lore.add(Math.max(0, Math.min(lore.size() - 1, index)), Main.coloredText(string));
+        } else if (type.equalsIgnoreCase("set")){
+            while ((lore.size() - 1) < index) lore.add(" ");
+            lore.set(index, Main.coloredText(string));
+        } else if (type.equalsIgnoreCase("remove")){
+            if (0 <= index && index < lore.size()) lore.remove(index);
+        }
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
     }
 }
